@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"golang_chatroom/cmd/tcp/utils"
 	"net"
+	"time"
 )
 
 
@@ -83,9 +84,24 @@ func delOutUser(user *utils.User) {
 }
 
 func listenUserMsg(conn net.Conn, user *utils.User) {
+	userActive := make(chan struct{})
+	go func() {
+		d := time.Second * 20
+		timer := time.NewTimer(d)
+		for {
+			select {
+			case <-timer.C:
+				conn.Close()
+			case <-userActive:
+				timer.Reset(d)
+			}
+		}
+	}()
+
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
 		infoOthers(user.GetID(), fmt.Sprintf("user[%v] : %v", user.GetIDStr(), input.Text()))
+		userActive <- struct{}{}
 	}
 	if err := input.Err(); err != nil {
 		fmt.Println("read err = ", err)

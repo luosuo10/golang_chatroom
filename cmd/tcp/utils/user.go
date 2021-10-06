@@ -38,12 +38,12 @@ func (u *User) InfoSelfByIDAndContent(userID int, content string) {
 }
 
 func (u *User) InfoSelfByMsg(msg Message) {
-	fmt.Printf("[InfoSelfByMsg], user = %+v, msg = %+v ", u, msg)
+	//fmt.Printf("[InfoSelfByMsg], user = %+v, msg = %+v ", u, msg)
 	if msg.GetUserID() == u.id {
-		fmt.Printf("skip\n")
+		//fmt.Printf("skip\n")
 		return
 	}
-	fmt.Printf("\n")
+	//fmt.Printf("\n")
 	u.msgCh <- msg
 }
 
